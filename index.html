@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday! 🩺✨</title>
+  <style>
+    :root {
+      --bg-color: #fff9f0;
+      --pink-main: #ff85a1;
+      --pink-soft: #fbb1bd;
+      --card-bg: #ffffff;
+      --text-color: #4a4e69;
+      --accent-green: #90be6d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating Background Polish */
+    .bg-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bg-shapes span {
+      position: absolute;
+      bottom: -50px;
+      font-size: 1.5rem;
+      opacity: 0.4;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    .bg-shapes span:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 0s; font-size: 2rem; }
+    .bg-shapes span:nth-child(2) { left: 30%; animation-duration: 15s; animation-delay: 2s; }
+    .bg-shapes span:nth-child(3) { left: 50%; animation-duration: 10s; animation-delay: 4s; font-size: 2.5rem; }
+    .bg-shapes span:nth-child(4) { left: 70%; animation-duration: 14s; animation-delay: 1s; }
+    .bg-shapes span:nth-child(5) { left: 85%; animation-duration: 18s; animation-delay: 3s; font-size: 1.8rem; }
+    .bg-shapes span:nth-child(6) { left: 20%; animation-duration: 11s; animation-delay: 5s; }
+    .bg-shapes span:nth-child(7) { left: 60%; animation-duration: 16s; animation-delay: 6s; font-size: 1.2rem; }
+    .bg-shapes span:nth-child(8) { left: 90%; animation-duration: 13s; animation-delay: 7s; }
+
+    .screen {
+      width: 90%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 10px 40px rgba(255, 133, 161, 0.15);
+      border: 3px solid #f0e6df;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .letter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bear-svg {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      color: var(--text-color);
+    }
+
+    p.subtitle {
+      font-size: 0.85rem;
+      color: #8d99ae;
+      line-height: 1.4;
+      padding: 0 10px;
+    }
+
+    input[type="text"] {
+      width: 85%;
+      padding: 10px;
+      border: 2px solid var(--pink-soft);
+      border-radius: 25px;
+      text-align: center;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--pink-main);
+      box-shadow: 0 0 8px rgba(255, 133, 161, 0.3);
+    }
+
+    .btn {
+      background: var(--pink-main);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      background: #ff6b8b;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    
+    .virus-warning {
+      font-size: 0.75rem;
+      color: #e63946;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    #gameCanvas {
+      background: #fff8f9;
+      border: 2px dashed var(--pink-soft);
+      border-radius: 12px;
+      touch-action: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .flash-red {
+      background: #ffdde1 !important;
+      border-color: #e63946 !important;
+    }
+
+    .game-instructions {
+      font-size: 0.8rem;
+      color: #8d99ae;
+      margin-top: 6px;
+    }
+
+    .rx-card {
+      border: 2px solid var(--accent-green);
+      border-radius: 12px;
+      padding: 14px;
+      background: #f4fbf7;
+      text-align: left;
+      margin: 12px 0;
+      position: relative;
+    }
+
+    .rx-title {
+      font-weight: bold;
+      color: var(--accent-green);
+      font-size: 1.1rem;
+      border-bottom: 1px dashed var(--accent-green);
+      padding-bottom: 5px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .rx-body p {
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .signature {
+      text-align: right;
+      font-weight: bold;
+      color: var(--pink-main);
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    #confettiCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Audio Toggle Button */
+    .audio-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 2px solid var(--pink-soft);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--pink-main);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: all 0.2s ease;
+    }
+
+    .audio-btn:hover {
+      background: var(--pink-soft);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Ambient Shapes -->
+  <div class="bg-shapes">
+    <span>🤍</span>
+    <span>✨</span>
+    <span>💊</span>
+    <span>🩺</span>
+    <span>🤍</span>
+    <span>✨</span>
+    <span>💊</span>
+    <span>🤍</span>
+  </div>
+
+  <canvas id="confettiCanvas"></canvas>
+  
+  <button id="audioBtn" class="audio-btn" onclick="toggleAudio()">🎵 Audio: OFF</button>
+
+  <!-- SCREEN 1: LETTER ENTRY -->
+  <div id="screen-letter" class="screen">
+    <div class="letter-container">
+      <svg class="bear-svg" viewBox="0 0 200 200">
+        <path d="M160 45 C160 35 145 35 145 45 C145 55 160 65 160 65 C160 65 175 55 175 45 C175 35 160 35 160 45 Z" fill="#ff4d6d" />
+        <path d="M175 25 C175 18 165 18 165 25 C165 32 175 38 175 38 C175 38 185 32 185 25 C185 18 175 18 175 25 Z" fill="#ff4d6d" />
+        <circle cx="65" cy="65" r="22" fill="#fff" stroke="#333" stroke-width="7" />
+        <circle cx="135" cy="65" r="22" fill="#fff" stroke="#333" stroke-width="7" />
+        <path d="M 45 110 C 40 70, 160 70, 155 110 C 160 145, 40 145, 45 110 Z" fill="#fff" stroke="#333" stroke-width="7" />
+        <path d="M 45 140 C 45 125, 80 125, 80 140 Z" fill="#fff" stroke="#333" stroke-width="7" />
+        <path d="M 120 140 C 120 125, 155 125, 155 140 Z" fill="#fff" stroke="#333" stroke-width="7" />
+        <circle cx="78" cy="100" r="5" fill="#333" />
+        <circle cx="122" cy="100" r="5" fill="#333" />
+        <ellipse cx="68" cy="112" rx="10" ry="6" fill="#ff85a1" opacity="0.6" />
+        <ellipse cx="132" cy="112" rx="10" ry="6" fill="#ff85a1" opacity="0.6" />
+        <ellipse cx="100" cy="106" rx="6" ry="4" fill="#333" />
+        <path d="M 90 115 Q 100 128 110 115 Z" fill="#fff" stroke="#333" stroke-width="5" />
+        <line x1="20" y1="140" x2="180" y2="140" stroke="#333" stroke-width="7" stroke-linecap="round" />
+      </svg>
+
+      <h2>Confidential Delivery ✉️</h2>
+      <p class="subtitle"><strong>Hint:</strong> a very smart person who hates to memorize stuff</p>
+      
+      <input type="text" id="nameInput" placeholder="Who are you?" autocomplete="off" />
+      <button class="btn" onclick="checkName()">Unlock</button>
+      <p id="errorMsg" style="color: #ff4d6d; font-size: 0.85rem; display: none; font-weight: bold; margin-top: 5px;"></p>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: MINI GAME -->
+  <div id="screen-game" class="screen hidden">
+    <h2>Rx Catch 🩺</h2>
+    <p class="subtitle" style="margin-bottom: 2px;">Collect 20 medical items!</p>
+    <p class="virus-warning">⚠️ Avoid Viruses (🦠 & ☣️️) = -2 pts</p>
+    
+    <div class="game-header">
+      <span>Score: <span id="scoreVal">0</span> / 20</span>
+      <span>Time: <span id="timerVal">120</span>s</span>
+    </div>
+
+    <canvas id="gameCanvas" width="300" height="320"></canvas>
+    <p class="game-instructions">Slide mouse or finger to catch</p>
+    
+    <button id="retryBtn" class="btn hidden" style="margin-top: 8px;" onclick="startGame()">Try Again 🔄</button>
+  </div>
+
+  <!-- SCREEN 3: CELEBRATION -->
+  <div id="screen-result" class="screen hidden">
+    <div style="font-size: 2.2rem;">🎂✨</div>
+    <h2>Happy Birthday Dr. Asma!</h2>
+    <p class="subtitle">01 / 10 / 2007</p>
+
+    <div class="rx-card">
+      <div class="rx-title">
+        <span>Rx PRESCRIPTION</span>
+        <span>🩺</span>
+      </div>
+      <div class="rx-body">
+        <p>You are confident, gentle, and a beautiful soul on earth.</p>
+        <p style="margin-top: 8px;">Wishing you much success on your path in pharmacy and becoming a great doctor (and very rich "علاج مريض خسارة زبون") 💰✨</p>
+        <div class="signature">— Chahine</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="location.reload()">Replay 💖</button>
+  </div>
+
+  <script>
+    // --- SILLY CAPTCHA LOGIC ---
+    const sillyErrors = [
+      "Wait, do you actually like memorizing? Imposter! 🚨",
+      "Whoops! The charts say you are not the target! 📋",
+      "Security: Unidentified non-doctor detected! 🚨",
+      "Prescription denied: Wrong identity! 💊",
+      "Hmm... are you sure you hate memorizing? Try again! 😷"
+    ];
+
+    function checkName() {
+      const input = document.getElementById('nameInput').value.trim().toLowerCase();
+      const errorMsg = document.getElementById('errorMsg');
+      
+      if (input.includes('asma')) {
+        document.getElementById('screen-letter').classList.add('hidden');
+        document.getElementById('screen-game').classList.remove('hidden');
+        startGame();
+      } else {
+        errorMsg.innerText = sillyErrors[Math.floor(Math.random() * sillyErrors.length)];
+        errorMsg.style.display = 'block';
+        
+        // Shake animation effect for wrong password
+        const screenBox = document.getElementById('screen-letter');
+        screenBox.style.transform = 'translate(5px, 0)';
+        setTimeout(() => screenBox.style.transform = 'translate(-5px, 0)', 50);
+        setTimeout(() => screenBox.style.transform = 'translate(5px, 0)', 100);
+        setTimeout(() => screenBox.style.transform = 'translate(0, 0)', 150);
+      }
+    }
+
+    document.getElementById('nameInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') checkName();
+    });
+
+    // --- GAME LOGIC ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let score = 0;
+    let timeLeft = 120;
+    let gameInterval, timerInterval;
+    const targetScore = 20;
+
+    const goodItems = ['💊', '🩺', '💉', '💖', '✨'];
+    const badItems = ['🦠', '☣️']; 
+    let fallingItems = [];
+
+    const player = {
+      x: canvas.width / 2 - 25,
+      y: canvas.height - 40,
+      width: 50,
+      height: 35
+    };
+
+    function handleMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      player.x = clientX - rect.left - player.width / 2;
+      
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+    }
+
+    canvas.addEventListener('mousemove', handleMove);
+    canvas.addEventListener('touchmove', handleMove);
+
+    function startGame() {
+      score = 0;
+      timeLeft = 120;
+      fallingItems = [];
+      
+      document.getElementById('scoreVal').innerText = score;
+      document.getElementById('timerVal').innerText = timeLeft;
+      document.getElementById('retryBtn').classList.add('hidden');
+
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerVal').innerText = timeLeft;
+        if (timeLeft <= 0) endGame(false);
+      }, 1000);
+
+      gameInterval = setInterval(updateGame, 1000 / 60);
+    }
+
+    function spawnItem() {
+      if (Math.random() < 0.05) {
+        const isBad = Math.random() < 0.25; 
+        const symbolArray = isBad ? badItems : goodItems;
+        const symbol = symbolArray[Math.floor(Math.random() * symbolArray.length)];
+        
+        fallingItems.push({
+          x: Math.random() * (canvas.width - 25),
+          y: -20,
+          symbol: symbol,
+          isBad: isBad,
+          speed: (isBad ? 1.8 : 1.3) + Math.random() * 1.0
+        });
+      }
+    }
+
+    function drawBearBasket(x, y) {
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#333333';
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.arc(x + 10, y + 6, 7, 0, Math.PI * 2);
+      ctx.arc(x + 40, y + 6, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(x + 25, y + 18, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#333';
+      ctx.beginPath();
+      ctx.arc(x + 18, y + 16, 2, 0, Math.PI * 2);
+      ctx.arc(x + 32, y + 16, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255, 133, 161, 0.6)';
+      ctx.beginPath();
+      ctx.arc(x + 14, y + 20, 3, 0, Math.PI * 2);
+      ctx.arc(x + 36, y + 20, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function triggerDamageFlash() {
+      canvas.classList.add('flash-red');
+      setTimeout(() => canvas.classList.remove('flash-red'), 150);
+    }
+
+    function updateGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawBearBasket(player.x, player.y);
+      spawnItem();
+
+      for (let i = 0; i < fallingItems.length; i++) {
+        let item = fallingItems[i];
+        item.y += item.speed;
+
+        ctx.font = '22px sans-serif';
+        ctx.fillText(item.symbol, item.x, item.y);
+
+        if (
+          item.y >= player.y - 10 &&
+          item.y <= player.y + player.height &&
+          item.x >= player.x - 12 &&
+          item.x <= player.x + player.width
+        ) {
+          
+          if (item.isBad) {
+            score = Math.max(0, score - 2); 
+            triggerDamageFlash();
+          } else {
+            score++;
+          }
+          
+          fallingItems.splice(i, 1);
+          i--;
+          document.getElementById('scoreVal').innerText = score;
+
+          if (score >= targetScore) {
+            endGame(true);
+          }
+          continue;
+        }
+
+        if (item.y > canvas.height + 20) {
+          fallingItems.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    function endGame(win) {
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+
+      if (win) {
+        document.getElementById('screen-game').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+        triggerConfetti();
+      } else {
+        document.getElementById('retryBtn').classList.remove('hidden');
+      }
+    }
+
+    function triggerConfetti() {
+      const cCanvas = document.getElementById('confettiCanvas');
+      const cCtx = cCanvas.getContext('2d');
+      cCanvas.width = window.innerWidth;
+      cCanvas.height = window.innerHeight;
+
+      const confetti = Array.from({ length: 80 }).map(() => ({
+        x: Math.random() * cCanvas.width,
+        y: Math.random() * cCanvas.height - cCanvas.height,
+        color: ['#ff85a1', '#fbb1bd', '#90be6d', '#f9c74f', '#a2d2ff'][Math.floor(Math.random() * 5)],
+        size: Math.random() * 7 + 4,
+        speed: Math.random() * 3 + 1.5
+      }));
+
+      function animateConfetti() {
+        cCtx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+        confetti.forEach((p) => {
+          p.y += p.speed;
+          if (p.y > cCanvas.height) p.y = -10;
+          cCtx.fillStyle = p.color;
+          cCtx.beginPath();
+          cCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          cCtx.fill();
+        });
+        requestAnimationFrame(animateConfetti);
+      }
+      animateConfetti();
+    }
+
+    // --- CUTE & COZY LOFI BEAT SYNTH (WEB AUDIO API) ---
+    let audioCtx;
+    let isPlaying = false;
+    let beatInterval;
+
+    function toggleAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
+      const btn = document.getElementById('audioBtn');
+
+      if (isPlaying) {
+        audioCtx.suspend();
+        clearInterval(beatInterval);
+        btn.innerText = '🎵 Audio: OFF';
+        isPlaying = false;
+      } else {
+        audioCtx.resume();
+        playCuteLofiBeat();
+        btn.innerText = '🎵 Audio: ON';
+        isPlaying = true;
+      }
+    }
+
+    function playCuteLofiBeat() {
+      const chords = [
+        [261.63, 329.63, 392.00, 493.88], // Cmaj7
+        [220.00, 261.63, 329.63, 392.00], // Amin7
+        [174.61, 220.00, 261.63, 329.63], // Fmaj7
+        [196.00, 246.94, 293.66, 349.23]  // G7
+      ];
+      
+      const melodies = [523.25, 659.25, 587.33, 783.99, 698.46]; // High cute notes
+      let step = 0;
+
+      beatInterval = setInterval(() => {
+        const now = audioCtx.currentTime;
+        
+        // 1. Cozy Pluck Chords (Every 8 steps / start of bar)
+        if (step % 8 === 0) {
+          let chordIdx = Math.floor(step / 8) % chords.length;
+          chords[chordIdx].forEach((freq, i) => {
+            playSynth(freq, now, i % 2 === 0 ? 'sine' : 'triangle', 0.05, 1.2, 800);
+          });
+        }
+        
+        // 2. Cute Bouncy Melody (On off-beats)
+        if (step % 3 === 0 || step % 8 === 5) {
+          if (Math.random() > 0.3) {
+            let note = melodies[Math.floor(Math.random() * melodies.length)];
+            playSynth(note, now, 'sine', 0.03, 0.4, 1500);
+          }
+        }
+
+        // 3. Soft Lofi Kick (Steps 0 and 4)
+        if (step % 8 === 0 || step % 8 === 4) {
+          playKick(now);
+        }
+        
+        // 4. Lofi Tick/Hat (Steps 2 and 6)
+        if (step % 8 === 2 || step % 8 === 6) {
+          playTick(now);
+        }
+
+        step = (step + 1) % 32;
+      }, 300); // 300ms per 8th note for a nice bouncy tempo
+    }
+
+    function playSynth(freq, time, type, vol, duration, filterFreq) {
+       const osc = audioCtx.createOscillator();
+       const gain = audioCtx.createGain();
+       const filter = audioCtx.createBiquadFilter();
+       
+       osc.type = type;
+       osc.frequency.value = freq;
+       
+       filter.type = 'lowpass';
+       filter.frequency.value = filterFreq;
+       
+       osc.connect(filter);
+       filter.connect(gain);
+       gain.connect(audioCtx.destination);
+       
+       gain.gain.setValueAtTime(0, time);
+       gain.gain.linearRampToValueAtTime(vol, time + 0.05);
+       gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+       
+       osc.start(time);
+       osc.stop(time + duration);
+    }
+    
+    function playKick(time) {
+       const osc = audioCtx.createOscillator();
+       const gain = audioCtx.createGain();
+       osc.type = 'sine';
+       osc.connect(gain);
+       gain.connect(audioCtx.destination);
+       
+       osc.frequency.setValueAtTime(120, time);
+       osc.frequency.exponentialRampToValueAtTime(30, time + 0.1);
+       
+       gain.gain.setValueAtTime(0, time);
+       gain.gain.linearRampToValueAtTime(0.4, time + 0.02);
+       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
+       
+       osc.start(time);
+       osc.stop(time + 0.3);
+    }
+    
+    function playTick(time) {
+       const osc = audioCtx.createOscillator();
+       const gain = audioCtx.createGain();
+       const filter = audioCtx.createBiquadFilter();
+       
+       osc.type = 'square';
+       osc.frequency.value = 800; 
+       
+       filter.type = 'highpass';
+       filter.frequency.value = 5000;
+       
+       osc.connect(filter);
+       filter.connect(gain);
+       gain.connect(audioCtx.destination);
+       
+       gain.gain.setValueAtTime(0, time);
+       gain.gain.linearRampToValueAtTime(0.03, time + 0.01);
+       gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+       
+       osc.start(time);
+       osc.stop(time + 0.05);
+    }
+  </script>
+</body>
+</html>
